@@ -1,10 +1,10 @@
 import React from 'react'
 import { View, Text } from 'react-native'
 
-export default function CustomButton() {
-     return ( 
+export default function LoginScreen() {
+     return (
           <View>
-               <Text></Text>
+               <Text>Login</Text>
           </View>
      )
 }
