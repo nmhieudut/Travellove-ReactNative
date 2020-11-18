@@ -1,9 +1,11 @@
 import React from 'react';
-import {createStackNavigator} from '@react-navigation/stack';
-import {View, Text} from 'react-native';
+import {
+  createStackNavigator,
+  TransitionSpecs,
+  HeaderStyleInterpolators,
+} from '@react-navigation/stack';
 import LoginScreen from './LoginScreen';
 import RegisterScreen from './RegisterScreen';
-import color from '../../constants/Colour';
 
 const Stack = createStackNavigator();
 
@@ -13,7 +15,7 @@ export default function index() {
       initialRouteName="LoginScreen"
       screenOptions={{
         headerStyle: {
-          backgroundColor: '#f4511e',
+          backgroundColor: 'transparent',
         },
         headerTintColor: '#fff',
         headerTitleStyle: {
@@ -26,17 +28,9 @@ export default function index() {
         options={{title: 'Login', headerShown: false}}
       />
       <Stack.Screen
-        initialParams={{message: 'Init text'}}
         name="RegisterScreen"
         component={RegisterScreen}
-        options={{
-          title: '',
-          headerBackTitle: 'Back',
-          headerBackTitleVisible: false,
-          headerStyle: {
-            backgroundColor: color.PRIMARY,
-          },
-        }}
+        options={{title: 'Register', headerShown: false}}
       />
     </Stack.Navigator>
   );
