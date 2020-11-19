@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -9,12 +9,25 @@ import {
   ScrollView,
 } from 'react-native';
 import {TextInput, Button} from 'react-native-paper';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import {useDispatch, useSelector} from 'react-redux';
 import mainImage from '../../../assets/image.jpg';
 import color from '../../../constants/Colour';
-// import {useNavigation} from '@react-navigation/native';
+import {loginAction} from '../action';
+
 const heightScr = Dimensions.get('screen').height;
 
 export default function Auth({navigation}) {
+  //state
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [visible, setVisible] = useState(true);
+  //redux
+  const dispatch = useDispatch();
+  const loading = useSelector((state) => state.authReducer.loading);
+  const onLogin = () => {
+    dispatch(loginAction(email, password));
+  };
   //   const navigation = useNavigation();
   return (
     <ScrollView>
@@ -31,6 +44,7 @@ export default function Auth({navigation}) {
               <TextInput
                 style={styles.text}
                 label="Username"
+                onChangeText={(text) => setEmail(text)}
                 theme={{
                   colors: {
                     primary: `${color.PRIMARY}`,
@@ -44,6 +58,7 @@ export default function Auth({navigation}) {
                 style={styles.text}
                 label="Password"
                 secureTextEntry
+                onChangeText={(text) => setPassword(text)}
                 theme={{
                   colors: {
                     primary: `${color.PRIMARY}`,
@@ -53,7 +68,13 @@ export default function Auth({navigation}) {
               />
             </View>
             <View style={styles.buttonContainer}>
-              <Button style={styles.loginButton} color="white" mode="flat">
+              <Button
+                style={styles.loginButton}
+                color="white"
+                mode="flat"
+                disabled={loading}
+                loading={loading}
+                onPress={onLogin}>
                 LOGIN
               </Button>
             </View>
