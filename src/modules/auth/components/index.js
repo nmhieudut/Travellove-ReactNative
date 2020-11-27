@@ -18,13 +18,19 @@ import {loginAction} from '../action';
 const heightScr = Dimensions.get('screen').height;
 
 export default function Auth({navigation}) {
-  //state
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [visible, setVisible] = useState(true);
   //redux
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.authReducer.loading);
+  const registeredUser = useSelector(
+    (state) => state.registerReducer.registeredUser,
+  );
+  console.log('dsadsa', registeredUser);
+  //state
+  const [email, setEmail] = useState(
+    registeredUser ? registeredUser.data.user.email : '',
+  );
+  const [password, setPassword] = useState('');
+
   const onLogin = () => {
     dispatch(loginAction(email, password));
   };
@@ -43,7 +49,7 @@ export default function Auth({navigation}) {
             <View style={styles.inputText}>
               <TextInput
                 style={styles.text}
-                label="Username"
+                label="Email"
                 onChangeText={(text) => setEmail(text)}
                 theme={{
                   colors: {
