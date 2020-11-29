@@ -30,8 +30,6 @@ const registerSchema = Yup.object().shape({
     .min(2, 'Too Short!')
     .max(30, 'Too Long')
     .required('Name is required'),
-  gender: Yup.string().required('Gender is required'),
-  birthday: Yup.date().required('Phone is required'),
 });
 export default function Register() {
   // hooks
@@ -71,14 +69,7 @@ export default function Register() {
             }}
             validationSchema={registerSchema}
             onSubmit={(values) => signUp(values)}>
-            {({
-              handleChange,
-              handleBlur,
-              handleSubmit,
-              values,
-              errors,
-              touched,
-            }) => (
+            {({handleChange, handleSubmit, values, errors}) => (
               <View style={styles.formArea}>
                 <View style={styles.inputText}>
                   <TextInput
@@ -146,11 +137,11 @@ export default function Register() {
                     value={values.gender}>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                       <Text style={{color: 'grey'}}>Male</Text>
-                      <RadioButton value="male" color={color.PRIMARY} />
+                      <RadioButton value="Male" color={color.PRIMARY} />
                     </View>
                     <View style={{flexDirection: 'row', alignItems: 'center'}}>
                       <Text style={{color: 'grey'}}>Female</Text>
-                      <RadioButton value="female" color={color.PRIMARY} />
+                      <RadioButton value="Female" color={color.PRIMARY} />
                     </View>
                   </RadioButton.Group>
                 </View>

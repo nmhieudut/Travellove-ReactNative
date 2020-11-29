@@ -7,14 +7,14 @@ import MainNavigator from './MainNavigator';
 
 const Stack = createStackNavigator();
 const AuthenticationStackNavigator = () => {
-  const loggedInUser = useSelector((state) => state.authReducer.loggedInUser);
-  if (!loggedInUser) {
-    return (
-      <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="LoginNavigator" component={LoginNavigator} />
-      </Stack.Navigator>
-    );
-  }
+  // const loggedInUser = useSelector((state) => state.authReducer.loggedInUser);
+  // if (!loggedInUser) {
+  //   return (
+  //     <Stack.Navigator screenOptions={{headerShown: false}}>
+  //       <Stack.Screen name="LoginNavigator" component={LoginNavigator} />
+  //     </Stack.Navigator>
+  //   );
+  // }
   return (
     <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name="MainNavigator" component={MainNavigator} />
