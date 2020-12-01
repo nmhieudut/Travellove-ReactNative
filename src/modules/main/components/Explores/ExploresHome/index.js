@@ -5,6 +5,7 @@ import {
   Image,
   FlatList,
   TouchableOpacity,
+  Dimensions,
   TextInput,
 } from 'react-native';
 import Loading from '../../../../../components/Loading';
@@ -14,10 +15,12 @@ import styles from './styles';
 import {Modalize} from 'react-native-modalize';
 import ExploresDetail from './ExploresDetail';
 
+const heightScr = Dimensions.get('window').height;
+
 export default function index() {
   const [data, setData] = useState([]);
   const [placeId, setPlaceId] = useState('');
-
+  const [fetching, setFetching] = useState(false);
   const token =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFubGUiLCJpYXQiOjE2MDYyNzY1NDMsImV4cCI6MTYzNzgxMjU0M30.9DWbvEsgmKO237PGtY0j4Tm7R_XMaCUdQyPhkgJnPFU';
   console.log('data', data);
@@ -30,6 +33,15 @@ export default function index() {
     };
     fetchPlaces();
   }, []);
+  const handleRefresh = () => {
+    setFetching(true);
+    setData([]);
+    const fetchPlaces = async () => {
+      setData(await getPlaces(token));
+      setFetching(false);
+    };
+    fetchPlaces();
+  };
   // open bottom sheet
   const onOpen = (_id) => {
     setPlaceId(_id);
@@ -106,7 +118,6 @@ export default function index() {
         {data.length > 0 ? (
           <FlatList
             horizontal
-            showsHorizontalScrollIndicator={false}
             data={data}
             keyExtractor={(item, index) => `${index}`}
             renderItem={renderItem}
@@ -123,13 +134,15 @@ export default function index() {
       </View>
       <View
         style={{
+          height: heightScr / 2.1,
           flex: data.length === 0 ? 1 : 0,
           justifyContent: data.length === 0 ? 'center' : 'flex-start',
         }}>
         {data.length > 0 ? (
           <FlatList
-            style={{marginBottom: 80}}
             data={data}
+            refreshing={fetching}
+            onRefresh={handleRefresh}
             showsVerticalScrollIndicator={false}
             keyExtractor={(item, index) => `${index}`}
             renderItem={renderPlaces}
@@ -138,7 +151,7 @@ export default function index() {
           <Loading />
         )}
       </View>
-      <Modalize snapPoint={400} ref={modalizeRef}>
+      <Modalize snapPoint={600} ref={modalizeRef}>
         <ExploresDetail placeId={placeId} />
       </Modalize>
     </View>

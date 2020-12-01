@@ -83,6 +83,10 @@ export default function index(props) {
               />
             </View>
             <View style={styles.description}>
+              <Text
+                style={{fontSize: 30, fontWeight: 'bold', marginBottom: 10}}>
+                Description
+              </Text>
               <Text style={{fontSize: 18}}>{detail.description}</Text>
             </View>
             <ImageView

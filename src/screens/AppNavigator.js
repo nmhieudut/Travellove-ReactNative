@@ -7,7 +7,7 @@ import MainNavigator from './MainNavigator';
 
 const Stack = createStackNavigator();
 const AuthenticationStackNavigator = () => {
-  // const loggedInUser = useSelector((state) => state.authReducer.loggedInUser);
+  //const loggedInUser = useSelector((state) => state.authReducer.loggedInUser);
   // if (!loggedInUser) {
   //   return (
   //     <Stack.Navigator screenOptions={{headerShown: false}}>
