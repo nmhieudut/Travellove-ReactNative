@@ -104,7 +104,14 @@ export default function index() {
   return (
     <View style={styles.container}>
       <View style={styles.title}>
-        <Text style={{fontSize: 34, fontWeight: 'bold'}}>Explore</Text>
+        <Text
+          style={{
+            fontSize: 34,
+            fontWeight: '700',
+            fontFamily: 'ProductSans-Regular',
+          }}>
+          Explore
+        </Text>
       </View>
       <View style={styles.searchContainer}>
         <TextInput
@@ -112,7 +119,9 @@ export default function index() {
           placeholder="Search for a destination"
           // onChangeText={onChangeSearch}
           // value={searchQuery}
+          inlineImageLeft="search_icon"
         />
+        <TouchableOpacity></TouchableOpacity>
       </View>
       <View style={styles.bestPlaceList}>
         {data.length > 0 ? (

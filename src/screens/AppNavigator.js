@@ -4,10 +4,11 @@ import {createStackNavigator} from '@react-navigation/stack';
 import {useSelector} from 'react-redux';
 import LoginNavigator from './LoginNavigator';
 import MainNavigator from './MainNavigator';
+import SearchScreen from './SearchScreen';
 
 const Stack = createStackNavigator();
 const AuthenticationStackNavigator = () => {
-  //const loggedInUser = useSelector((state) => state.authReducer.loggedInUser);
+  // const loggedInUser = useSelector((state) => state.authReducer.loggedInUser);
   // if (!loggedInUser) {
   //   return (
   //     <Stack.Navigator screenOptions={{headerShown: false}}>
@@ -16,8 +17,13 @@ const AuthenticationStackNavigator = () => {
   //   );
   // }
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
-      <Stack.Screen name="MainNavigator" component={MainNavigator} />
+    <Stack.Navigator>
+      <Stack.Screen
+        name="MainNavigator"
+        options={{headerShown: false}}
+        component={MainNavigator}
+      />
+      <Stack.Screen name="SearchScreen" component={SearchScreen} />
     </Stack.Navigator>
   );
 };

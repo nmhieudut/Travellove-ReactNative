@@ -13,13 +13,14 @@ import ImageView from 'react-native-image-view';
 import {Button} from 'react-native-paper';
 import Loading from '../../../../../../components/Loading';
 import styles from './styles';
+import {useNavigation} from '@react-navigation/native';
 
 export default function index(props) {
   const [detail, setDetail] = useState(null);
   const [isImageViewVisible, setIsImageViewVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
+  const navigation = useNavigation();
   console.log('detail', detail);
-  const _id = props.placeId;
   const token =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFubGUiLCJpYXQiOjE2MDYyNzY1NDMsImV4cCI6MTYzNzgxMjU0M30.9DWbvEsgmKO237PGtY0j4Tm7R_XMaCUdQyPhkgJnPFU';
   const imageSource =
@@ -34,7 +35,7 @@ export default function index(props) {
   console.log('image', imageSource);
   useEffect(() => {
     const fetchPlaceDetail = async () => {
-      const res = await getPlaceById(_id, token);
+      const res = await getPlaceById(props.placeId, token);
       setDetail(res);
     };
     fetchPlaceDetail();
@@ -97,7 +98,15 @@ export default function index(props) {
             />
           </ScrollView>
           <View style={styles.buttonContainer}>
-            <Button color="white" style={styles.button}>
+            <Button
+              color="white"
+              style={styles.button}
+              onPress={() => {
+                navigation.navigate('Trips', {
+                  placeId: detail._id,
+                  placeName: detail.name,
+                });
+              }}>
               SEE MORE
             </Button>
           </View>

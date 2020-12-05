@@ -1,9 +1,9 @@
 import axios from 'axios';
 
-export const getBestPlaces = async (id, token) => {
+export const getFoods = async (id, token) => {
   try {
     const response = await axios.get(
-      `https://travellove-cndd.herokuapp.com/places/${id}/hotplaces`,
+      `https://travellove-cndd.herokuapp.com/places/${id}/foods`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
