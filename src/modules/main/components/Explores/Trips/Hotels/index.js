@@ -2,26 +2,18 @@ import React, {useState, useEffect} from 'react';
 import {View, Text, FlatList, Image, TouchableOpacity} from 'react-native';
 import {getHotels} from '../../../../../../services/hotels';
 import {Rating} from 'react-native-elements';
+import {Chip} from 'react-native-paper';
 import Loading from '../../../../../../components/Loading';
 import Like from '../../../../../../components/Like';
 import styles from './styles';
+import {useNavigation} from '@react-navigation/native';
 
 export default function index(props) {
-  const [data, setData] = useState([
-    {
-      name: 'Nha tro Tan Le',
-      minPrice: 300000,
-      maxPrice: 500000,
-      mainimg:
-        'https://www.imglegacyhotel.com/wp-content/uploads/2018/10/legacy-hotel-23.jpg',
-      discount: 15,
-      description: 'Hotel nhu con cac',
-    },
-  ]);
+  const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [selectedServices, setSelectedServices] = useState([]);
-
+  const navigation = useNavigation();
   const _id = props.id;
   const token =
     'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFubGUiLCJpYXQiOjE2MDYyNzY1NDMsImV4cCI6MTYzNzgxMjU0M30.9DWbvEsgmKO237PGtY0j4Tm7R_XMaCUdQyPhkgJnPFU';
@@ -29,22 +21,24 @@ export default function index(props) {
   console.log('Selected Services:', selectedServices);
 
   useEffect(() => {
-    // const fetchHotels = async () => {
-    //   setLoading(true);
-    //   setData(await getHotels(_id, token));
-    //   setLoading(false);
-    // };
-    // fetchHotels();
+    const fetchHotels = async () => {
+      setLoading(true);
+      setData(await getHotels(_id, token));
+      setLoading(false);
+    };
+    fetchHotels();
   }, []);
+
   const handleRefresh = () => {
-    // setFetching(true);
-    // setData([]);
-    // const fetchHotels = async () => {
-    //   setData(await getHotels(_id, token));
-    //   setFetching(false);
-    // };
-    // fetchHotels();
+    setFetching(true);
+    setData([]);
+    const fetchHotels = async () => {
+      setData(await getHotels(_id, token));
+      setFetching(false);
+    };
+    fetchHotels();
   };
+
   const addServices = ({item, checked}) => {
     const newItems = [...selectedServices];
     if (checked) {
@@ -55,28 +49,51 @@ export default function index(props) {
       setSelectedServices(newUncheckedItems);
     }
   };
+
   const renderItem = ({item}) => {
     return (
       <View>
-        <TouchableOpacity style={styles.item}>
+        <TouchableOpacity
+          style={styles.item}
+          onPress={() => navigation.navigate('HotelDetail')}>
           <Image style={styles.image} source={{uri: item.mainimg}} />
           <View style={styles.info}>
-            <Text style={{fontSize: 24, fontWeight: 'bold'}}>
+            <Text style={{fontSize: 20, fontWeight: 'bold'}}>
               {item.name.toUpperCase()}
             </Text>
-            <Text>
-              {item.minPrice} - {item.maxPrice}
+            <Text style={{fontSize: 14, color: 'grey'}} numberOfLines={1}>
+              {item.address}
             </Text>
+            <View style={styles.ratingArea}>
+              <Rating
+                style={styles.rating}
+                imageSize={14}
+                readonly
+                startingValue={item.star}
+              />
+              <Text> {item.star}</Text>
+            </View>
+            <View style={{marginBottom: 15}}>
+              <Text numberOfLines={2}>{item.description}</Text>
+            </View>
+            <View style={{marginBottom: 10}}>
+              <Chip icon="currency-usd">
+                {item.min_price} - {item.max_price} VND
+              </Chip>
+            </View>
           </View>
-          <View style={styles.discountTag}>
-            <Text style={{color: 'white', textAlign: 'center'}}>
-              -{item.discount}%
-            </Text>
-          </View>
+          {item.discount !== 0 && (
+            <View style={styles.discountTag}>
+              <Text style={{color: 'white', textAlign: 'center'}}>
+                -{item.discount}%
+              </Text>
+            </View>
+          )}
         </TouchableOpacity>
       </View>
     );
   };
+
   return (
     <View style={{flex: 1}}>
       <FlatList

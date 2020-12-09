@@ -2,7 +2,7 @@ import {StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
   item: {
-    height: 200,
+    height: 150,
     borderRadius: 10,
     marginHorizontal: 5,
     marginVertical: 10,

@@ -1,7 +1,6 @@
 import {StyleSheet} from 'react-native';
 const styles = StyleSheet.create({
   item: {
-    height: 300,
     margin: 10,
     backgroundColor: 'white',
     overflow: 'hidden',
@@ -21,6 +20,11 @@ const styles = StyleSheet.create({
     right: -20,
     backgroundColor: 'red',
     transform: [{rotate: '45deg'}],
+  },
+  ratingArea: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
   },
 });
 export default styles;

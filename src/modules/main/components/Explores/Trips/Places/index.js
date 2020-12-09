@@ -5,12 +5,14 @@ import {Rating} from 'react-native-elements';
 import Loading from '../../../../../../components/Loading';
 import Like from '../../../../../../components/Like';
 import styles from './styles';
+import {useNavigation} from '@react-navigation/native';
 
 export default function index(props) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
   const [selectedServices, setSelectedServices] = useState([]);
+  const navigation = useNavigation();
   console.log('Selected Services:', selectedServices);
   const _id = props.id;
   const token =
@@ -45,7 +47,9 @@ export default function index(props) {
   };
   const renderItem = ({item}) => {
     return (
-      <TouchableOpacity style={styles.item}>
+      <TouchableOpacity
+        style={styles.item}
+        onPress={() => navigation.navigate('PlaceDetail')}>
         <Image
           resizeMode="cover"
           style={styles.placeImg}
@@ -53,6 +57,9 @@ export default function index(props) {
         />
         <View style={styles.info}>
           <Text style={{fontSize: 24, fontWeight: 'bold'}}>{item.name}</Text>
+          <Text style={{fontSize: 14, color: 'grey'}} numberOfLines={1}>
+            {item.address}
+          </Text>
           <View style={styles.ratingArea}>
             <Rating
               style={styles.rating}
