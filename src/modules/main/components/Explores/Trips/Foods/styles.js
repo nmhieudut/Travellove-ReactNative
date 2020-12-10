@@ -2,17 +2,15 @@ import {StyleSheet} from 'react-native';
 
 const styles = StyleSheet.create({
   item: {
-    borderRadius: 10,
     marginHorizontal: 5,
     marginVertical: 10,
     backgroundColor: 'white',
     flexDirection: 'row',
   },
   foodImg: {
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
-    width: 125,
-    height: '100%',
+    width: 110,
+    marginHorizontal: 10,
+    marginVertical: 20,
   },
   info: {
     marginHorizontal: 10,

@@ -52,6 +52,7 @@ export default function index(props) {
         style={styles.item}
         onPress={() =>
           navigation.navigate('FoodDetail', {
+            placeId: _id,
             foodId: item._id,
           })
         }>

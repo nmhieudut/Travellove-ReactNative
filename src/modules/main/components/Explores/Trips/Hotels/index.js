@@ -55,7 +55,12 @@ export default function index(props) {
       <View>
         <TouchableOpacity
           style={styles.item}
-          onPress={() => navigation.navigate('HotelDetail')}>
+          onPress={() =>
+            navigation.navigate('HotelDetail', {
+              placeId: _id,
+              hotelId: item._id,
+            })
+          }>
           <Image style={styles.image} source={{uri: item.mainimg}} />
           <View style={styles.info}>
             <Text style={{fontSize: 20, fontWeight: 'bold'}}>

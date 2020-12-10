@@ -60,7 +60,7 @@ export default function index(props) {
           </TouchableOpacity>
         </View>
         <View style={styles.title}>
-          <Text style={{fontSize: 30, fontWeight: 'bold', color: 'white'}}>
+          <Text style={{fontSize: 20, fontWeight: 'bold', color: 'white'}}>
             {_placeName.toUpperCase()}
           </Text>
         </View>

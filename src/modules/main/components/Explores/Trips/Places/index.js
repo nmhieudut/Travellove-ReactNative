@@ -49,7 +49,12 @@ export default function index(props) {
     return (
       <TouchableOpacity
         style={styles.item}
-        onPress={() => navigation.navigate('PlaceDetail')}>
+        onPress={() =>
+          navigation.navigate('PlaceDetail', {
+            placeId: _id,
+            bestPlaceId: item._id,
+          })
+        }>
         <Image
           resizeMode="cover"
           style={styles.placeImg}
