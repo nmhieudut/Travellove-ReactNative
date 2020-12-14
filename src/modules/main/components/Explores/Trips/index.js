@@ -15,7 +15,6 @@ export default function index(props) {
   const navigation = useNavigation();
   const _id = props.route.params.placeId;
   const _placeName = props.route.params.placeName;
-  console.log('trips', _id, props.route.params.placeName);
   const [index, setIndex] = useState(0);
   const [routes] = useState([
     {key: 'first', title: 'Best Places'},

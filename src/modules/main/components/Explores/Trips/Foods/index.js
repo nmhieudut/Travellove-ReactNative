@@ -7,18 +7,16 @@ import {Chip} from 'react-native-paper';
 import Like from '../../../../../../components/Like';
 import styles from './styles';
 import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 
 export default function index(props) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
-  const [selectedServices, setSelectedServices] = useState([]);
   const navigation = useNavigation();
-  console.log('Selected Services:', selectedServices);
+  const loggedInUser = useSelector((state) => state.authReducer.loggedInUser);
   const _id = props.id;
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFubGUiLCJpYXQiOjE2MDYyNzY1NDMsImV4cCI6MTYzNzgxMjU0M30.9DWbvEsgmKO237PGtY0j4Tm7R_XMaCUdQyPhkgJnPFU';
-  console.log('foods', data);
+  const token = loggedInUser && loggedInUser.token;
   useEffect(() => {
     const fetchFoods = async () => {
       setLoading(true);
@@ -27,6 +25,7 @@ export default function index(props) {
     };
     fetchFoods();
   }, []);
+
   const handleRefresh = () => {
     setFetching(true);
     setData([]);
@@ -36,16 +35,7 @@ export default function index(props) {
     };
     fetchFoods();
   };
-  const addServices = ({item, checked}) => {
-    const newItems = [...selectedServices];
-    if (checked) {
-      newItems.push(item);
-      setSelectedServices(newItems);
-    } else {
-      var newUncheckedItems = newItems.filter((e) => e.id !== item.id);
-      setSelectedServices(newUncheckedItems);
-    }
-  };
+
   const renderItem = ({item}) => {
     return (
       <TouchableOpacity
@@ -69,21 +59,15 @@ export default function index(props) {
               style={styles.rating}
               imageSize={14}
               readonly
-              startingValue={item.star_rating}
+              startingValue={Number(item.star_rating)}
             />
             <Text> {item.star_rating}</Text>
           </View>
           <View style={{marginBottom: 10}}>
-            <Chip icon="currency-usd">{item.price} VND</Chip>
+            <Chip icon="currency-usd" textStyle={{fontSize: 10}}>
+              {item.price} VND
+            </Chip>
           </View>
-        </View>
-        <View style={styles.likeArea}>
-          <Like
-            item={item}
-            onSelected={({item, checked}) => {
-              addServices({item, checked});
-            }}
-          />
         </View>
       </TouchableOpacity>
     );

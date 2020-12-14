@@ -7,68 +7,34 @@ import {
   TouchableOpacity,
   FlatList,
   TextInput,
+  ActivityIndicator,
+  ToastAndroid,
 } from 'react-native';
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
 import color from '../../constants/Colour';
 import {Rating} from 'react-native-elements';
-import {Button, Avatar} from 'react-native-paper';
+import {Avatar} from 'react-native-paper';
 import ImageView from 'react-native-image-view';
 import Loading from '../../components/Loading';
 import Icon from 'react-native-vector-icons/AntDesign';
 import FIcon from 'react-native-vector-icons/Ionicons';
-import {getHotelDetail} from '../../services/hotels';
+import {getHotelDetail, likedHotels} from '../../services/hotels';
 import {useNavigation} from '@react-navigation/native';
-import {getCommentsByHotel} from '../../services/comments';
+import {useSelector} from 'react-redux';
+import {getCommentsByStuff, postCommentsByStuff} from '../../services/comments';
 export default function HotelDetail(props) {
   const placeId = props.route.params.placeId;
   const hotelId = props.route.params.hotelId;
   const navigation = useNavigation();
-  const comments = [
-    {
-      id: 1,
-      name: 'Con di Nui thanh',
-      content:
-        'Ahuhudsadasdsadddsadsdasdsadsadasdsadasddsdadasiuhduashdiudsadsadsadsadsdsa',
-      avatar:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/126195911_1059921951099787_6759447979467808539_n.png?_nc_cat=109&ccb=2&_nc_sid=ae9488&_nc_ohc=aJZGp7RXjMcAX9I5Xe1&_nc_ht=scontent.fsgn2-4.fna&oh=cd2451e99ceb7b409735312a73c9c30d&oe=5FF6A83C',
-    },
-    {
-      id: 1,
-      name: 'Con di Nui thanh',
-      content:
-        'Ahuhudsadasdsadddsadsdasdsadsadasdsadasddsdadasiuhduashdiudsadsadsadsadsdsa',
-      avatar:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/126195911_1059921951099787_6759447979467808539_n.png?_nc_cat=109&ccb=2&_nc_sid=ae9488&_nc_ohc=aJZGp7RXjMcAX9I5Xe1&_nc_ht=scontent.fsgn2-4.fna&oh=cd2451e99ceb7b409735312a73c9c30d&oe=5FF6A83C',
-    },
-    {
-      id: 1,
-      name: 'Con di Nui thanh',
-      content:
-        'Ahuhudsadasdsadddsadsdasdsadsadasdsadasddsdadasiuhduashdiudsadsadsadsadsdsa',
-      avatar:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/126195911_1059921951099787_6759447979467808539_n.png?_nc_cat=109&ccb=2&_nc_sid=ae9488&_nc_ohc=aJZGp7RXjMcAX9I5Xe1&_nc_ht=scontent.fsgn2-4.fna&oh=cd2451e99ceb7b409735312a73c9c30d&oe=5FF6A83C',
-    },
-    {
-      id: 1,
-      name: 'Con di Nui thanh',
-      content:
-        'Ahuhudsadasdsadddsadsdasdsadsadasdsadasddsdadasiuhduashdiudsadsadsadsadsdsa',
-      avatar:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/126195911_1059921951099787_6759447979467808539_n.png?_nc_cat=109&ccb=2&_nc_sid=ae9488&_nc_ohc=aJZGp7RXjMcAX9I5Xe1&_nc_ht=scontent.fsgn2-4.fna&oh=cd2451e99ceb7b409735312a73c9c30d&oe=5FF6A83C',
-    },
-    {
-      id: 1,
-      name: 'Con di Nui thanh',
-      content:
-        'Ahuhudsadasdsadddsadsdasdsadsadasdsadasddsdadasiuhduashdiudsadsadsadsadsdsa',
-      avatar:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/126195911_1059921951099787_6759447979467808539_n.png?_nc_cat=109&ccb=2&_nc_sid=ae9488&_nc_ohc=aJZGp7RXjMcAX9I5Xe1&_nc_ht=scontent.fsgn2-4.fna&oh=cd2451e99ceb7b409735312a73c9c30d&oe=5FF6A83C',
-    },
-  ];
 
+  const [content, setContent] = useState('');
   const [data, setData] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [commentLoading, setCommentLoading] = useState(false);
   const [isImageViewVisible, setIsImageViewVisible] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
+  const loggedInUser = useSelector((state) => state.authReducer.loggedInUser);
   const imageSource =
     data &&
     data.images.map((item) => {
@@ -78,37 +44,89 @@ export default function HotelDetail(props) {
         },
       };
     });
-  console.log('image', imageSource);
-  console.log('hotel detail', data);
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFubGUiLCJpYXQiOjE2MDYyNzY1NDMsImV4cCI6MTYzNzgxMjU0M30.9DWbvEsgmKO237PGtY0j4Tm7R_XMaCUdQyPhkgJnPFU';
+  const token = loggedInUser && loggedInUser.token;
+  const userId = loggedInUser.user._id;
 
   useEffect(() => {
     const fetchHotelDetail = async () => {
       setData(await getHotelDetail(placeId, hotelId, token));
     };
     fetchHotelDetail();
+    return () => setData([]);
   }, []);
 
+  useEffect(() => {
+    const fetchCommentsByHotel = async () => {
+      setComments(await getCommentsByStuff(hotelId, token));
+    };
+    fetchCommentsByHotel();
+  }, [comments]);
+
+  useEffect(() => {
+    if (data) {
+      const found = data.users.filter((user) => user === userId);
+      if (found.length > 0) {
+        setIsLiked(true);
+      }
+    }
+  }, [data]);
+  const cmtContent = async () => {
+    if (content.trim() !== '') {
+      setCommentLoading(true);
+      await postCommentsByStuff(userId, hotelId, token, content);
+      setCommentLoading(false);
+      setContent('');
+    } else ToastAndroid.show('Text something... !', ToastAndroid.SHORT);
+  };
+  const removeLike = async () => {
+    if (data) {
+      if (isLiked) {
+        const likeUsers = data.users.filter((user) => user !== userId);
+        await likedHotels(hotelId, likeUsers, token);
+        setIsLiked(false);
+        ToastAndroid.show('Remove successfully', ToastAndroid.SHORT);
+      } else {
+        const likeUsers = [];
+        likeUsers.push(userId);
+        await likedHotels(hotelId, likeUsers, token);
+        setIsLiked(true);
+        ToastAndroid.show('Add to favorite successfully', ToastAndroid.SHORT);
+      }
+    }
+  };
   const fixedHeader = () => {
     return (
-      <TouchableOpacity
-        onPress={() => navigation.goBack()}
+      <View
         style={{
           flex: 1,
-          justifyContent: 'center',
-          paddingLeft: 10,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          backgroundColor: `${color.PRIMARY}`,
         }}>
-        <Icon
-          name="arrowleft"
-          style={{
-            color: 'white',
-            fontSize: 20,
-            textShadowColor: 'rgba(0, 0, 0, 0.75)',
-            textShadowOffset: {width: -1, height: 1},
-          }}
-        />
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={{width: 60, paddingLeft: 10}}
+          onPress={() => navigation.goBack()}>
+          <Icon
+            name="arrowleft"
+            style={{
+              color: '#ffffff',
+              fontSize: 20,
+            }}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{width: 60, paddingLeft: 10}}
+          onPress={removeLike}>
+          <Icon
+            name="heart"
+            style={{
+              color: isLiked ? 'red' : '#ffffff',
+              fontSize: 20,
+            }}
+          />
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -148,10 +166,12 @@ export default function HotelDetail(props) {
     return (
       <View style={styles.commentItem}>
         <View>
-          <Avatar.Image size={50} source={{uri: item.avatar}} />
+          <Avatar.Image size={50} source={{uri: item.user.avatar}} />
         </View>
         <View style={styles.commentContent}>
-          <Text style={{fontSize: 18, fontWeight: 'bold'}}>{item.name}</Text>
+          <Text style={{fontSize: 18, fontWeight: 'bold'}}>
+            {item.user.name}
+          </Text>
           <Text>{item.content}</Text>
         </View>
       </View>
@@ -212,26 +232,33 @@ export default function HotelDetail(props) {
                 <View style={styles.commentList}>
                   <FlatList
                     style={{marginTop: 10}}
-                    vertical
-                    showsVerticalScrollIndicator
                     data={comments}
                     renderItem={renderComments}
                     keyExtractor={(item, i) => `${i}`}
                   />
                   <View style={styles.inputArea}>
                     <View>
-                      <Avatar.Image size={50} />
+                      <Avatar.Image
+                        size={50}
+                        source={{uri: loggedInUser.user.avatar}}
+                      />
                     </View>
                     <View style={styles.commentInputArea}>
                       <TextInput
                         style={styles.commentInput}
                         placeholder="Comment..."
+                        value={content}
+                        onChangeText={(text) => setContent(text)}
                       />
-                      <TouchableOpacity
-                        style={{marginLeft: 10}}
-                        onPress={() => console.log('Press')}>
-                        <FIcon name="send-sharp" size={24} />
-                      </TouchableOpacity>
+                      {!commentLoading ? (
+                        <TouchableOpacity
+                          style={{marginLeft: 10}}
+                          onPress={cmtContent}>
+                          <FIcon name="send-sharp" size={24} />
+                        </TouchableOpacity>
+                      ) : (
+                        <ActivityIndicator style={{marginLeft: 10}} />
+                      )}
                     </View>
                   </View>
                 </View>

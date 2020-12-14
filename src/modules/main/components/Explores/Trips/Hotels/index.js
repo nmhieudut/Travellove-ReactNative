@@ -7,18 +7,16 @@ import Loading from '../../../../../../components/Loading';
 import Like from '../../../../../../components/Like';
 import styles from './styles';
 import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 
 export default function index(props) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
-  const [selectedServices, setSelectedServices] = useState([]);
   const navigation = useNavigation();
+  const loggedInUser = useSelector((state) => state.authReducer.loggedInUser);
   const _id = props.id;
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFubGUiLCJpYXQiOjE2MDYyNzY1NDMsImV4cCI6MTYzNzgxMjU0M30.9DWbvEsgmKO237PGtY0j4Tm7R_XMaCUdQyPhkgJnPFU';
-  console.log('hotels', data);
-  console.log('Selected Services:', selectedServices);
+  const token = loggedInUser && loggedInUser.token;
 
   useEffect(() => {
     const fetchHotels = async () => {
@@ -37,17 +35,6 @@ export default function index(props) {
       setFetching(false);
     };
     fetchHotels();
-  };
-
-  const addServices = ({item, checked}) => {
-    const newItems = [...selectedServices];
-    if (checked) {
-      newItems.push(item);
-      setSelectedServices(newItems);
-    } else {
-      var newUncheckedItems = newItems.filter((e) => e.id !== item.id);
-      setSelectedServices(newUncheckedItems);
-    }
   };
 
   const renderItem = ({item}) => {
@@ -74,7 +61,7 @@ export default function index(props) {
                 style={styles.rating}
                 imageSize={14}
                 readonly
-                startingValue={item.star}
+                startingValue={Number(item.star)}
               />
               <Text> {item.star}</Text>
             </View>
@@ -101,13 +88,17 @@ export default function index(props) {
 
   return (
     <View style={{flex: 1}}>
-      <FlatList
-        data={data}
-        refreshing={fetching}
-        onRefresh={handleRefresh}
-        renderItem={renderItem}
-        keyExtractor={(item, i) => `${i}`}
-      />
+      {!loading ? (
+        <FlatList
+          data={data}
+          refreshing={fetching}
+          onRefresh={handleRefresh}
+          renderItem={renderItem}
+          keyExtractor={(item, i) => `${i}`}
+        />
+      ) : (
+        <Loading />
+      )}
     </View>
   );
 }

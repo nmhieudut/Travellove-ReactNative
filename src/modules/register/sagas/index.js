@@ -4,7 +4,6 @@ import {put, takeLatest} from 'redux-saga/effects';
 import register from '../../../services/register';
 
 function* Register(action) {
-  console.log('Action: ', action);
   try {
     const response = yield register.register(action.values);
     yield put({

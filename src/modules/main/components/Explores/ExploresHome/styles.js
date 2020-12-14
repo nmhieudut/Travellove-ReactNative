@@ -1,5 +1,6 @@
-import {StyleSheet} from 'react-native';
+import {StyleSheet, Dimensions} from 'react-native';
 
+const heightScr = Dimensions.get('screen').height;
 const styles = StyleSheet.create({
   container: {
     paddingHorizontal: 20,
@@ -54,7 +55,7 @@ const styles = StyleSheet.create({
   },
   bestPlaceList: {
     paddingVertical: 10,
-    height: 130,
+    height: heightScr / 5,
   },
   placeItem: {
     width: '100%',

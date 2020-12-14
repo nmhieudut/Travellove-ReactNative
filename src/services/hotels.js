@@ -18,7 +18,26 @@ export const getHotels = async (id, token) => {
 export const getHotelDetail = async (id, hotelId, token) => {
   try {
     const response = await axios.get(
-      `https://travellove-cndd.herokuapp.com/places/${id}/hotplaces/${hotelId}`,
+      `https://travellove-cndd.herokuapp.com/places/${id}/hotels/${hotelId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+    return response.data;
+  } catch (e) {
+    console.log(e);
+  }
+};
+
+export const likedHotels = async (hotelId, users, token) => {
+  try {
+    const response = await axios.put(
+      `https://travellove-cndd.herokuapp.com/hotels/${hotelId}`,
+      {
+        users: users,
+      },
       {
         headers: {
           Authorization: `Bearer ${token}`,

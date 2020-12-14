@@ -10,25 +10,26 @@ import {
 } from 'react-native';
 import Loading from '../../../../../components/Loading';
 import {Avatar} from 'react-native-paper';
-import {getPlaces} from '../../../../../services/places';
+import {getPlaces, getHotPlaces} from '../../../../../services/places';
 import styles from './styles';
 import {Modalize} from 'react-native-modalize';
 import ExploresDetail from './ExploresDetail';
-
+import {useSelector} from 'react-redux';
 const heightScr = Dimensions.get('window').height;
 
 export default function index() {
   const [data, setData] = useState([]);
+  const [hotPlaceData, setHotPlaceData] = useState([]);
   const [placeId, setPlaceId] = useState('');
   const [fetching, setFetching] = useState(false);
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFubGUiLCJpYXQiOjE2MDYyNzY1NDMsImV4cCI6MTYzNzgxMjU0M30.9DWbvEsgmKO237PGtY0j4Tm7R_XMaCUdQyPhkgJnPFU';
-  console.log('data', data);
+  const loggedInUser = useSelector((state) => state.authReducer.loggedInUser);
+  const token = loggedInUser && loggedInUser.token;
 
   const modalizeRef = useRef(null);
 
   useEffect(() => {
     const fetchPlaces = async () => {
+      setHotPlaceData(await getHotPlaces(token));
       setData(await getPlaces(token));
     };
     fetchPlaces();
@@ -61,7 +62,8 @@ export default function index() {
         />
         <View style={styles.overlay}></View>
         <View style={styles.textOverlay}>
-          <Text style={{color: 'white', fontWeight: 'bold'}}>
+          <Text
+            style={{color: 'white', fontWeight: 'bold', textAlign: 'center'}}>
             {item.name.toUpperCase()}
           </Text>
         </View>
@@ -113,21 +115,12 @@ export default function index() {
           Explore
         </Text>
       </View>
-      <View style={styles.searchContainer}>
-        <TextInput
-          style={styles.searchBar}
-          placeholder="Search for a destination"
-          // onChangeText={onChangeSearch}
-          // value={searchQuery}
-          inlineImageLeft="search_icon"
-        />
-        <TouchableOpacity></TouchableOpacity>
-      </View>
       <View style={styles.bestPlaceList}>
+        <Text style={{fontSize: 20, fontWeight: 'bold'}}>Hot Places</Text>
         {data.length > 0 ? (
           <FlatList
             horizontal
-            data={data}
+            data={hotPlaceData}
             keyExtractor={(item, index) => `${index}`}
             renderItem={renderItem}
           />
@@ -143,7 +136,7 @@ export default function index() {
       </View>
       <View
         style={{
-          height: heightScr / 2.1,
+          height: '55%',
           flex: data.length === 0 ? 1 : 0,
           justifyContent: data.length === 0 ? 'center' : 'flex-start',
         }}>

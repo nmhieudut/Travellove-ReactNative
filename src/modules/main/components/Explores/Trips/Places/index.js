@@ -6,18 +6,17 @@ import Loading from '../../../../../../components/Loading';
 import Like from '../../../../../../components/Like';
 import styles from './styles';
 import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 
 export default function index(props) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [fetching, setFetching] = useState(false);
-  const [selectedServices, setSelectedServices] = useState([]);
   const navigation = useNavigation();
-  console.log('Selected Services:', selectedServices);
+  const loggedInUser = useSelector((state) => state.authReducer.loggedInUser);
   const _id = props.id;
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFubGUiLCJpYXQiOjE2MDYyNzY1NDMsImV4cCI6MTYzNzgxMjU0M30.9DWbvEsgmKO237PGtY0j4Tm7R_XMaCUdQyPhkgJnPFU';
-  console.log('places', data);
+  const token = loggedInUser && loggedInUser.token;
+
   useEffect(() => {
     const fetchBestPlaces = async () => {
       setLoading(true);
@@ -35,16 +34,7 @@ export default function index(props) {
     };
     fetchPlaces();
   };
-  const addServices = ({item, checked}) => {
-    const newItems = [...selectedServices];
-    if (checked) {
-      newItems.push(item);
-      setSelectedServices(newItems);
-    } else {
-      var newUncheckedItems = newItems.filter((e) => e.id !== item.id);
-      setSelectedServices(newUncheckedItems);
-    }
-  };
+
   const renderItem = ({item}) => {
     return (
       <TouchableOpacity
@@ -70,7 +60,7 @@ export default function index(props) {
               style={styles.rating}
               imageSize={14}
               readonly
-              startingValue={item.star}
+              startingValue={Number(item.star)}
             />
             <Text> {item.star}</Text>
           </View>
@@ -79,14 +69,6 @@ export default function index(props) {
               {item.description}
             </Text>
           </View>
-        </View>
-        <View style={styles.likeArea}>
-          <Like
-            item={item}
-            onSelected={({item, checked}) => {
-              addServices({item, checked});
-            }}
-          />
         </View>
       </TouchableOpacity>
     );

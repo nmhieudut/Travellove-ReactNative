@@ -38,7 +38,6 @@ export default function Register() {
   // redux store
   const loading = useSelector((state) => state.registerReducer.loading);
   const success = useSelector((state) => state.registerReducer.success);
-  console.log('loading:', loading, 'success', success);
   useEffect(() => {
     if (success) {
       ToastAndroid.show('Registered successfully !', ToastAndroid.SHORT);

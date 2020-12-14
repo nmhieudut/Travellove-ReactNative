@@ -7,68 +7,35 @@ import {
   TouchableOpacity,
   FlatList,
   TextInput,
+  ActivityIndicator,
+  ToastAndroid,
 } from 'react-native';
 import ParallaxScrollView from 'react-native-parallax-scroll-view';
 import color from '../../constants/Colour';
 import {Rating} from 'react-native-elements';
-import {Button, Avatar} from 'react-native-paper';
+import {Avatar} from 'react-native-paper';
 import ImageView from 'react-native-image-view';
 import Loading from '../../components/Loading';
 import Icon from 'react-native-vector-icons/AntDesign';
 import FIcon from 'react-native-vector-icons/Ionicons';
-import {getFoodDetail} from '../../services/foods';
+import {getFoodDetail, likedFood} from '../../services/foods';
 import {useNavigation} from '@react-navigation/native';
-import {getCommentsByFood} from '../../services/comments';
+import {getCommentsByStuff, postCommentsByStuff} from '../../services/comments';
+import {useSelector} from 'react-redux';
+
 export default function FoodDetail(props) {
   const placeId = props.route.params.placeId;
   const foodId = props.route.params.foodId;
   const navigation = useNavigation();
-  const comments = [
-    {
-      id: 1,
-      name: 'Con di Nui thanh',
-      content:
-        'Ahuhudsadasdsadddsadsdasdsadsadasdsadasddsdadasiuhduashdiudsadsadsadsadsdsa',
-      avatar:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/126195911_1059921951099787_6759447979467808539_n.png?_nc_cat=109&ccb=2&_nc_sid=ae9488&_nc_ohc=aJZGp7RXjMcAX9I5Xe1&_nc_ht=scontent.fsgn2-4.fna&oh=cd2451e99ceb7b409735312a73c9c30d&oe=5FF6A83C',
-    },
-    {
-      id: 1,
-      name: 'Con di Nui thanh',
-      content:
-        'Ahuhudsadasdsadddsadsdasdsadsadasdsadasddsdadasiuhduashdiudsadsadsadsadsdsa',
-      avatar:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/126195911_1059921951099787_6759447979467808539_n.png?_nc_cat=109&ccb=2&_nc_sid=ae9488&_nc_ohc=aJZGp7RXjMcAX9I5Xe1&_nc_ht=scontent.fsgn2-4.fna&oh=cd2451e99ceb7b409735312a73c9c30d&oe=5FF6A83C',
-    },
-    {
-      id: 1,
-      name: 'Con di Nui thanh',
-      content:
-        'Ahuhudsadasdsadddsadsdasdsadsadasdsadasddsdadasiuhduashdiudsadsadsadsadsdsa',
-      avatar:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/126195911_1059921951099787_6759447979467808539_n.png?_nc_cat=109&ccb=2&_nc_sid=ae9488&_nc_ohc=aJZGp7RXjMcAX9I5Xe1&_nc_ht=scontent.fsgn2-4.fna&oh=cd2451e99ceb7b409735312a73c9c30d&oe=5FF6A83C',
-    },
-    {
-      id: 1,
-      name: 'Con di Nui thanh',
-      content:
-        'Ahuhudsadasdsadddsadsdasdsadsadasdsadasddsdadasiuhduashdiudsadsadsadsadsdsa',
-      avatar:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/126195911_1059921951099787_6759447979467808539_n.png?_nc_cat=109&ccb=2&_nc_sid=ae9488&_nc_ohc=aJZGp7RXjMcAX9I5Xe1&_nc_ht=scontent.fsgn2-4.fna&oh=cd2451e99ceb7b409735312a73c9c30d&oe=5FF6A83C',
-    },
-    {
-      id: 1,
-      name: 'Con di Nui thanh',
-      content:
-        'Ahuhudsadasdsadddsadsdasdsadsadasdsadasddsdadasiuhduashdiudsadsadsadsadsdsa',
-      avatar:
-        'https://scontent.fsgn2-4.fna.fbcdn.net/v/t1.15752-9/126195911_1059921951099787_6759447979467808539_n.png?_nc_cat=109&ccb=2&_nc_sid=ae9488&_nc_ohc=aJZGp7RXjMcAX9I5Xe1&_nc_ht=scontent.fsgn2-4.fna&oh=cd2451e99ceb7b409735312a73c9c30d&oe=5FF6A83C',
-    },
-  ];
 
+  const [content, setContent] = useState('');
   const [data, setData] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [commentLoading, setCommentLoading] = useState(false);
   const [isImageViewVisible, setIsImageViewVisible] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
+  const loggedInUser = useSelector((state) => state.authReducer.loggedInUser);
   const imageSource =
     data &&
     data.images.map((item) => {
@@ -78,10 +45,8 @@ export default function FoodDetail(props) {
         },
       };
     });
-  console.log('image', imageSource);
-  console.log('detail', data);
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFubGUiLCJpYXQiOjE2MDYyNzY1NDMsImV4cCI6MTYzNzgxMjU0M30.9DWbvEsgmKO237PGtY0j4Tm7R_XMaCUdQyPhkgJnPFU';
+  const token = loggedInUser && loggedInUser.token;
+  const userId = loggedInUser.user._id;
 
   useEffect(() => {
     const fetchFoodDetail = async () => {
@@ -90,23 +55,81 @@ export default function FoodDetail(props) {
     fetchFoodDetail();
   }, []);
 
+  useEffect(() => {
+    if (data) {
+      const found = data.users.filter((user) => user === userId);
+      if (found.length > 0) {
+        setIsLiked(true);
+      }
+    }
+  }, [data]);
+
+  useEffect(() => {
+    const fetchCommentsByFood = async () => {
+      setComments(await getCommentsByStuff(foodId, token));
+    };
+    fetchCommentsByFood();
+  }, [comments]);
+
+  const cmtContent = async () => {
+    if (content.trim() !== '') {
+      setCommentLoading(true);
+      await postCommentsByStuff(userId, foodId, token, content);
+      setCommentLoading(false);
+      setContent('');
+    } else ToastAndroid.show('Text something... !', ToastAndroid.SHORT);
+  };
+
+  const removeLike = async () => {
+    if (data) {
+      if (isLiked) {
+        const likeUsers = data.users.filter((user) => user !== userId);
+        await likedFood(foodId, likeUsers, token);
+        setIsLiked(false);
+        ToastAndroid.show('Remove successfully', ToastAndroid.SHORT);
+      } else {
+        const likeUsers = [];
+        likeUsers.push(userId);
+        await likedFood(foodId, likeUsers, token);
+        setIsLiked(true);
+        ToastAndroid.show('Add to favorite successfully', ToastAndroid.SHORT);
+      }
+    }
+  };
+
   const fixedHeader = () => {
     return (
-      <TouchableOpacity
-        onPress={() => navigation.goBack()}
+      <View
         style={{
           flex: 1,
-          justifyContent: 'center',
-          paddingLeft: 10,
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          backgroundColor: `${color.PRIMARY}`,
         }}>
-        <Icon
-          name="arrowleft"
-          style={{
-            color: '#ffffff',
-            fontSize: 20,
-          }}
-        />
-      </TouchableOpacity>
+        <TouchableOpacity
+          style={{width: 60, paddingLeft: 10}}
+          onPress={() => navigation.goBack()}>
+          <Icon
+            name="arrowleft"
+            style={{
+              color: '#ffffff',
+              fontSize: 20,
+            }}
+          />
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={{width: 60, paddingLeft: 10}}
+          onPress={removeLike}>
+          <Icon
+            name="heart"
+            style={{
+              color: isLiked ? 'red' : '#ffffff',
+              fontSize: 20,
+            }}
+          />
+        </TouchableOpacity>
+      </View>
     );
   };
 
@@ -146,10 +169,12 @@ export default function FoodDetail(props) {
     return (
       <View style={styles.commentItem}>
         <View>
-          <Avatar.Image size={50} source={{uri: item.avatar}} />
+          <Avatar.Image size={50} source={{uri: item.user.avatar}} />
         </View>
         <View style={styles.commentContent}>
-          <Text style={{fontSize: 18, fontWeight: 'bold'}}>{item.name}</Text>
+          <Text style={{fontSize: 18, fontWeight: 'bold'}}>
+            {item.user.name}
+          </Text>
           <Text>{item.content}</Text>
         </View>
       </View>
@@ -157,89 +182,92 @@ export default function FoodDetail(props) {
   };
   return (
     <>
-      <>
-        <ParallaxScrollView
-          backgroundColor="#fafafa"
-          contentBackgroundColor="white"
-          parallaxHeaderHeight={300}
-          renderFixedHeader={fixedHeader}
-          stickyHeaderHeight={50}
-          renderForeground={renderForeground}>
-          {data ? (
-            <View style={styles.content}>
-              <View style={styles.name}>
-                <Text style={{fontSize: 20, fontWeight: 'bold'}}>
-                  {data.name}
-                </Text>
-                <View style={styles.ratingArea}>
-                  <Rating
-                    imageSize={20}
-                    readonly
-                    startingValue={data.star_rating}
-                  />
-                  <Text> {data.star_rating}</Text>
-                </View>
-              </View>
-              <Text style={{margin: 5, color: 'grey'}}>{data.address}</Text>
-              <View style={styles.description}>
-                <Text style={{color: 'grey', fontSize: 16}}>
-                  {data.description}
-                </Text>
-              </View>
-              <View style={styles.listImages}>
-                <FlatList
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  data={data.images}
-                  keyExtractor={(item, i) => `${i}`}
-                  renderItem={renderItem}
+      <ParallaxScrollView
+        backgroundColor="#fafafa"
+        contentBackgroundColor="white"
+        parallaxHeaderHeight={300}
+        renderFixedHeader={fixedHeader}
+        stickyHeaderHeight={50}
+        renderForeground={renderForeground}>
+        {data ? (
+          <View style={styles.content}>
+            <View style={styles.name}>
+              <Text style={{fontSize: 20, fontWeight: 'bold'}}>
+                {data.name}
+              </Text>
+              <View style={styles.ratingArea}>
+                <Rating
+                  imageSize={20}
+                  readonly
+                  startingValue={parseInt(data.star_rating)}
                 />
+                <Text> {data.star_rating}</Text>
               </View>
-              <ImageView
-                images={imageSource}
-                imageIndex={imageIndex}
-                isVisible={isImageViewVisible}
-                onClose={() => setIsImageViewVisible(false)}
+            </View>
+            <Text style={{margin: 5, color: 'grey'}}>{data.address}</Text>
+            <View style={styles.description}>
+              <Text style={{color: 'grey', fontSize: 16}}>
+                {data.description}
+              </Text>
+            </View>
+            <View style={styles.listImages}>
+              <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                data={data.images}
+                keyExtractor={(item, i) => `${i}`}
+                renderItem={renderItem}
               />
-              <View style={styles.commentArea}>
-                <View style={styles.title}>
-                  <Text style={{fontSize: 20, fontWeight: 'bold'}}>
-                    Comments
-                  </Text>
-                </View>
-                <View style={styles.commentList}>
-                  <FlatList
-                    style={{marginTop: 10}}
-                    vertical
-                    showsVerticalScrollIndicator
-                    data={comments}
-                    renderItem={renderComments}
-                    keyExtractor={(item, i) => `${i}`}
-                  />
-                  <View style={styles.inputArea}>
-                    <View>
-                      <Avatar.Image size={50} />
-                    </View>
-                    <View style={styles.commentInputArea}>
-                      <TextInput
-                        style={styles.commentInput}
-                        placeholder="Comment..."
-                      />
+            </View>
+            <ImageView
+              images={imageSource}
+              imageIndex={imageIndex}
+              isVisible={isImageViewVisible}
+              onClose={() => setIsImageViewVisible(false)}
+            />
+            <View style={styles.commentArea}>
+              <View style={styles.title}>
+                <Text style={{fontSize: 20, fontWeight: 'bold'}}>Comments</Text>
+              </View>
+              <View style={styles.commentList}>
+                <FlatList
+                  style={{marginTop: 10}}
+                  data={comments}
+                  renderItem={renderComments}
+                  keyExtractor={(item, i) => `${i}`}
+                />
+                <View style={styles.inputArea}>
+                  <View>
+                    <Avatar.Image
+                      size={50}
+                      source={{uri: loggedInUser.user.avatar}}
+                    />
+                  </View>
+                  <View style={styles.commentInputArea}>
+                    <TextInput
+                      style={styles.commentInput}
+                      placeholder="Comment..."
+                      value={content}
+                      onChangeText={(text) => setContent(text)}
+                    />
+                    {!commentLoading ? (
                       <TouchableOpacity
                         style={{marginLeft: 10}}
-                        onPress={() => console.log('Press')}>
+                        onPress={cmtContent}>
                         <FIcon name="send-sharp" size={24} />
                       </TouchableOpacity>
-                    </View>
+                    ) : (
+                      <ActivityIndicator style={{marginLeft: 10}} />
+                    )}
                   </View>
                 </View>
               </View>
             </View>
-          ) : (
-            <Loading />
-          )}
-        </ParallaxScrollView>
-      </>
+          </View>
+        ) : (
+          <Loading />
+        )}
+      </ParallaxScrollView>
     </>
   );
 }

@@ -14,15 +14,16 @@ import {Button} from 'react-native-paper';
 import Loading from '../../../../../../components/Loading';
 import styles from './styles';
 import {useNavigation} from '@react-navigation/native';
+import {useSelector} from 'react-redux';
 
 export default function index(props) {
   const [detail, setDetail] = useState(null);
   const [isImageViewVisible, setIsImageViewVisible] = useState(false);
   const [imageIndex, setImageIndex] = useState(0);
   const navigation = useNavigation();
-  console.log('detail', detail);
-  const token =
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoidGFubGUiLCJpYXQiOjE2MDYyNzY1NDMsImV4cCI6MTYzNzgxMjU0M30.9DWbvEsgmKO237PGtY0j4Tm7R_XMaCUdQyPhkgJnPFU';
+  const loggedInUser = useSelector((state) => state.authReducer.loggedInUser);
+  const token = loggedInUser && loggedInUser.token;
+
   const imageSource =
     detail &&
     detail.images.map((item) => {
@@ -32,7 +33,6 @@ export default function index(props) {
         },
       };
     });
-  console.log('image', imageSource);
   useEffect(() => {
     const fetchPlaceDetail = async () => {
       const res = await getPlaceById(props.placeId, token);
@@ -40,12 +40,12 @@ export default function index(props) {
     };
     fetchPlaceDetail();
   }, []);
+
   const renderItem = (item) => {
     return (
       <TouchableOpacity
         style={styles.imageItem}
         onPress={() => {
-          console.log('item', item.index);
           setImageIndex(item.index);
           setIsImageViewVisible(true);
         }}>
@@ -71,7 +71,11 @@ export default function index(props) {
                   Rating: <Text style={{color: 'orange'}}>{detail.star}</Text> /
                   5
                 </Text>
-                <Rating imageSize={20} readonly startingValue={detail.star} />
+                <Rating
+                  imageSize={20}
+                  readonly
+                  startingValue={Number(detail.star)}
+                />
               </View>
             </View>
             <View style={styles.listImages}>
@@ -107,7 +111,7 @@ export default function index(props) {
                   placeName: detail.name,
                 });
               }}>
-              SEE MORE
+              DISCOVER IT
             </Button>
           </View>
         </>
