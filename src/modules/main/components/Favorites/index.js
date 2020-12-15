@@ -19,9 +19,6 @@ export default function index() {
   const token = loggedInUser && loggedInUser.token;
   const userId = loggedInUser && loggedInUser.user._id;
   const buttons = ['Places', 'Foods', 'Hotels'];
-  console.log('select: ', selectedIndex);
-  console.log('data', data);
-  console.log('filterData', filterData);
 
   const fetchData = async () => {
     setLoading(true);
@@ -48,7 +45,6 @@ export default function index() {
   };
 
   const navigateToDetail = ({item}) => {
-    console.log('item', item);
     if (selectedIndex === 0) {
       return navigation.navigate('PlaceDetail', {
         placeId: item.placeId,

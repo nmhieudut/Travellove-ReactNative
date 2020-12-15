@@ -45,7 +45,6 @@ export default function Register() {
     }
   }, [success]);
   const signUp = (values) => {
-    console.log(values);
     dispatch(registerAction(values));
   };
   return (

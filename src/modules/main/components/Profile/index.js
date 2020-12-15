@@ -21,50 +21,54 @@ export default function index() {
 
   return (
     <ScrollView>
-      <View style={styles.avatarArea}>
-        <View style={styles.avatarContainer}>
-          <Image style={styles.avatar} source={{uri: user.avatar}} />
-        </View>
-      </View>
-      <View style={styles.infoArea}>
-        <View style={styles.infoChild}>
-          <FIcon name="user" size={24} />
-          <View style={styles.infoText}>
-            <Text style={styles.title}>User Name</Text>
-            <Text style={styles.content}>{user.name}</Text>
+      {user && (
+        <>
+          <View style={styles.avatarArea}>
+            <View style={styles.avatarContainer}>
+              <Image style={styles.avatar} source={{uri: user.avatar}} />
+            </View>
           </View>
-        </View>
-        <View style={styles.infoChild}>
-          <EIcon name="mail" size={24} />
-          <View style={styles.infoText}>
-            <Text style={styles.title}>Email</Text>
-            <Text style={styles.content}>{user.email}</Text>
+          <View style={styles.infoArea}>
+            <View style={styles.infoChild}>
+              <FIcon name="user" size={24} />
+              <View style={styles.infoText}>
+                <Text style={styles.title}>User Name</Text>
+                <Text style={styles.content}>{user.name}</Text>
+              </View>
+            </View>
+            <View style={styles.infoChild}>
+              <EIcon name="mail" size={24} />
+              <View style={styles.infoText}>
+                <Text style={styles.title}>Email</Text>
+                <Text style={styles.content}>{user.email}</Text>
+              </View>
+            </View>
+            <View style={styles.infoChild}>
+              <FIcon name="birthday-cake" size={24} color="black" />
+              <View style={styles.infoText}>
+                <Text style={styles.title}>Birthday</Text>
+                <Text style={styles.content}>
+                  {moment(user.birthday).format('YYYY-MM-DD')}
+                </Text>
+              </View>
+            </View>
+            <View style={styles.infoChild}>
+              <FIcon
+                name={user.gender === 'Female' ? 'female' : 'male'}
+                size={24}
+              />
+              <View style={styles.infoText}>
+                <Text style={styles.title}>Gender</Text>
+                <Text style={styles.content}>{user.gender}</Text>
+              </View>
+            </View>
           </View>
-        </View>
-        <View style={styles.infoChild}>
-          <FIcon name="birthday-cake" size={24} color="black" />
-          <View style={styles.infoText}>
-            <Text style={styles.title}>Birthday</Text>
-            <Text style={styles.content}>
-              {moment(user.birthday).format('YYYY-MM-DD')}
-            </Text>
-          </View>
-        </View>
-        <View style={styles.infoChild}>
-          <FIcon
-            name={user.gender === 'Female' ? 'female' : 'male'}
-            size={24}
-          />
-          <View style={styles.infoText}>
-            <Text style={styles.title}>Gender</Text>
-            <Text style={styles.content}>{user.gender}</Text>
-          </View>
-        </View>
-      </View>
 
-      <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
-        <Text style={{color: 'white'}}>LOG OUT</Text>
-      </TouchableOpacity>
+          <TouchableOpacity style={styles.logoutButton} onPress={onLogout}>
+            <Text style={{color: 'white'}}>LOG OUT</Text>
+          </TouchableOpacity>
+        </>
+      )}
     </ScrollView>
   );
 }
