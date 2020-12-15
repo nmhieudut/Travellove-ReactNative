@@ -25,14 +25,14 @@ const styles = StyleSheet.create({
     padding: 30,
     borderRadius: 30,
     margin: 30,
-    marginTop: heightScr / 8,
+    marginTop: heightScr / 12,
     backgroundColor: 'white',
     shadowColor: 'black',
     shadowOpacity: 0.4,
     elevation: 7,
   },
   inputText: {
-    marginVertical: 15,
+    marginVertical: 10,
   },
   inputGender: {
     marginVertical: 15,

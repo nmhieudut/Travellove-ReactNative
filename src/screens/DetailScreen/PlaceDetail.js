@@ -47,7 +47,7 @@ export default function PlaceDetail(props) {
     });
   const token = loggedInUser && loggedInUser.token;
   const userId = loggedInUser.user._id;
-
+  console.log('data:', data);
   useEffect(() => {
     const fetchBestPlaceDetail = async () => {
       setData(await getBestPlaceDetail(placeId, bestPlaceId, token));
@@ -181,96 +181,87 @@ export default function PlaceDetail(props) {
   };
   return (
     <>
-      <>
-        <ParallaxScrollView
-          backgroundColor="#fafafa"
-          contentBackgroundColor="white"
-          parallaxHeaderHeight={300}
-          renderFixedHeader={fixedHeader}
-          stickyHeaderHeight={50}
-          renderForeground={renderForeground}>
-          {data ? (
-            <View style={styles.content}>
-              <View style={styles.name}>
-                <Text style={{fontSize: 20, fontWeight: 'bold'}}>
-                  {data.name}
-                </Text>
-                <View style={styles.ratingArea}>
-                  <Rating
-                    imageSize={20}
-                    readonly
-                    startingValue={data.star_rating}
-                  />
-                  <Text> {data.star_rating}</Text>
-                </View>
+      <ParallaxScrollView
+        backgroundColor="#fafafa"
+        contentBackgroundColor="white"
+        parallaxHeaderHeight={300}
+        renderFixedHeader={fixedHeader}
+        stickyHeaderHeight={50}
+        renderForeground={renderForeground}>
+        {data ? (
+          <View style={styles.content}>
+            <View style={styles.name}>
+              <Text style={{fontSize: 20, fontWeight: 'bold'}}>
+                {data.name}
+              </Text>
+              <View style={styles.ratingArea}>
+                <Rating imageSize={20} readonly startingValue={data.star} />
               </View>
-              <Text style={{margin: 5, color: 'grey'}}>{data.address}</Text>
-              <View style={styles.description}>
-                <Text style={{color: 'grey', fontSize: 16}}>
-                  {data.description}
-                </Text>
-              </View>
-              <View style={styles.listImages}>
-                <FlatList
-                  horizontal
-                  showsHorizontalScrollIndicator={false}
-                  data={data.images}
-                  keyExtractor={(item, i) => `${i}`}
-                  renderItem={renderItem}
-                />
-              </View>
-              <ImageView
-                images={imageSource}
-                imageIndex={imageIndex}
-                isVisible={isImageViewVisible}
-                onClose={() => setIsImageViewVisible(false)}
+            </View>
+            <Text style={{margin: 5, color: 'grey'}}>{data.address}</Text>
+            <View style={styles.description}>
+              <Text style={{color: 'grey', fontSize: 16}}>
+                {data.description}
+              </Text>
+            </View>
+            <View style={styles.listImages}>
+              <FlatList
+                horizontal
+                showsHorizontalScrollIndicator={false}
+                data={data.images}
+                keyExtractor={(item, i) => `${i}`}
+                renderItem={renderItem}
               />
-              <View style={styles.commentArea}>
-                <View style={styles.title}>
-                  <Text style={{fontSize: 20, fontWeight: 'bold'}}>
-                    Comments
-                  </Text>
-                </View>
-                <View style={styles.commentList}>
-                  <FlatList
-                    style={{marginTop: 10}}
-                    data={comments}
-                    renderItem={renderComments}
-                    keyExtractor={(item, i) => `${i}`}
-                  />
-                  <View style={styles.inputArea}>
-                    <View>
-                      <Avatar.Image
-                        size={50}
-                        source={{uri: loggedInUser.user.avatar}}
-                      />
-                    </View>
-                    <View style={styles.commentInputArea}>
-                      <TextInput
-                        style={styles.commentInput}
-                        placeholder="Comment..."
-                        value={content}
-                        onChangeText={(text) => setContent(text)}
-                      />
-                      {!commentLoading ? (
-                        <TouchableOpacity
-                          style={{marginLeft: 10}}
-                          onPress={cmtContent}>
-                          <FIcon name="send-sharp" size={24} />
-                        </TouchableOpacity>
-                      ) : (
-                        <ActivityIndicator style={{marginLeft: 10}} />
-                      )}
-                    </View>
+            </View>
+            <ImageView
+              images={imageSource}
+              imageIndex={imageIndex}
+              isVisible={isImageViewVisible}
+              onClose={() => setIsImageViewVisible(false)}
+            />
+            <View style={styles.commentArea}>
+              <View style={styles.title}>
+                <Text style={{fontSize: 20, fontWeight: 'bold'}}>Comments</Text>
+              </View>
+              <View style={styles.commentList}>
+                <FlatList
+                  style={{marginTop: 10}}
+                  data={comments}
+                  renderItem={renderComments}
+                  keyExtractor={(item, i) => `${i}`}
+                />
+                <View style={styles.inputArea}>
+                  <View>
+                    <Avatar.Image
+                      size={50}
+                      source={{uri: loggedInUser.user.avatar}}
+                    />
+                  </View>
+                  <View style={styles.commentInputArea}>
+                    <TextInput
+                      style={styles.commentInput}
+                      placeholder="Comment..."
+                      value={content}
+                      onChangeText={(text) => setContent(text)}
+                    />
+                    {!commentLoading ? (
+                      <TouchableOpacity
+                        style={{marginLeft: 10}}
+                        onPress={cmtContent}>
+                        <FIcon name="send-sharp" size={24} />
+                      </TouchableOpacity>
+                    ) : (
+                      <ActivityIndicator style={{marginLeft: 10}} />
+                    )}
                   </View>
                 </View>
               </View>
             </View>
-          ) : (
-            <Loading />
-          )}
-        </ParallaxScrollView>
-      </>
+          </View>
+        ) : (
+          <Loading />
+        )}
+      </ParallaxScrollView>
     </>
   );
 }

@@ -17,7 +17,7 @@ export default function index(props) {
   const _placeName = props.route.params.placeName;
   const [index, setIndex] = useState(0);
   const [routes] = useState([
-    {key: 'first', title: 'Best Places'},
+    {key: 'first', title: 'Attactions'},
     {key: 'second', title: 'Foods'},
     {key: 'third', title: 'Hotels'},
   ]);
@@ -39,7 +39,13 @@ export default function index(props) {
     <TabBar
       {...props}
       renderLabel={({route, focused}) => (
-        <Text style={{color: 'white', margin: 4, fontSize: 16}}>
+        <Text
+          style={{
+            color: 'white',
+            margin: 4,
+            fontSize: 14,
+            textAlign: 'center',
+          }}>
           {route.title.toUpperCase()}
         </Text>
       )}

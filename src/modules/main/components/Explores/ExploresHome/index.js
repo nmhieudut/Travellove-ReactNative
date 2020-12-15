@@ -136,7 +136,7 @@ export default function index() {
       </View>
       <View
         style={{
-          height: '55%',
+          height: '50%',
           flex: data.length === 0 ? 1 : 0,
           justifyContent: data.length === 0 ? 'center' : 'flex-start',
         }}>

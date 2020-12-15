@@ -55,7 +55,8 @@ const styles = StyleSheet.create({
   },
   bestPlaceList: {
     paddingVertical: 10,
-    height: heightScr / 5,
+    justifyContent: 'center',
+    height: heightScr / 4.5,
   },
   placeItem: {
     width: '100%',

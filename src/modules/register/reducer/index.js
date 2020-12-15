@@ -9,6 +9,13 @@ const defaultState = {
 
 export default function (state = defaultState, action) {
   switch (action.type) {
+    case ActionTypes.CLEAR_CACHE:
+      return {
+        loading: false,
+        registeredUser: null,
+        success: null,
+        error: null,
+      };
     case ActionTypes.AUTH_REGISTER:
       return {
         loading: true,

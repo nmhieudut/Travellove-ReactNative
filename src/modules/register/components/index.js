@@ -17,7 +17,7 @@ import * as Yup from 'yup';
 import {Formik} from 'formik';
 import {useNavigation} from '@react-navigation/native';
 import {useDispatch, useSelector} from 'react-redux';
-import {registerAction} from '../action';
+import {registerAction, clearRegisterCacheAction} from '../action';
 
 // YUP
 const registerSchema = Yup.object().shape({
@@ -42,6 +42,7 @@ export default function Register() {
     if (success) {
       ToastAndroid.show('Registered successfully !', ToastAndroid.SHORT);
       navigation.navigate('LoginScreen');
+      dispatch(clearRegisterCacheAction());
     }
   }, [success]);
   const signUp = (values) => {

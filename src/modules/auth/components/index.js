@@ -98,7 +98,7 @@ export default function Auth({navigation}) {
         </ImageBackground>
       </TouchableOpacity>
       <View style={styles.registerContainer}>
-        <Text style={styles.registerText}>Let's meet Tanle first!</Text>
+        <Text style={styles.registerText}>Haven't had an account yet ?</Text>
         <TouchableOpacity
           style={styles.register}
           onPress={() => {
@@ -143,7 +143,8 @@ const styles = StyleSheet.create({
     padding: 30,
     paddingTop: 10,
     borderRadius: 30,
-    margin: 30,
+    marginVertical: 10,
+    marginHorizontal: 30,
     backgroundColor: 'white',
     shadowColor: 'black',
     shadowOpacity: 0.4,
