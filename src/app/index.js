@@ -6,7 +6,7 @@ import {Provider} from 'react-redux';
 import {composeWithDevTools} from 'redux-devtools-extension';
 // Reducers
 import authReducer from '../modules/auth/reducer';
-// import registerReducer from '../modules/register/reducers'
+import registerReducer from '../modules/register/reducer';
 // import cartsReducer from '../modules/carts/reducers'
 
 // Saga (root)
@@ -17,7 +17,7 @@ import AppNavigator from '../screens/AppNavigator';
 // ROOT REDUCER
 const rootReducer = combineReducers({
   authReducer,
-  // registerReducer,
+  registerReducer,
   // cartsReducer
 });
 // MIDDLEWARE

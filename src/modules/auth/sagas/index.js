@@ -11,7 +11,7 @@ function* Login(action) {
       type: ActionTypes.AUTH_LOGIN_SUCCESS,
       loggedInUser: response.data,
     });
-    console.log('response: ', response.data);
+    console.log(response.data);
   } catch (error) {
     console.log(error);
     yield put({type: ActionTypes.AUTH_LOGIN_FAILED, error: error});

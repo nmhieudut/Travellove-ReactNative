@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -7,9 +7,10 @@ import {
   Dimensions,
   TouchableOpacity,
   ScrollView,
+  ToastAndroid,
 } from 'react-native';
 import {TextInput, Button} from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import AsyncStorage from '@react-native-community/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import mainImage from '../../../assets/image.jpg';
 import color from '../../../constants/Colour';
@@ -18,17 +19,32 @@ import {loginAction} from '../action';
 const heightScr = Dimensions.get('screen').height;
 
 export default function Auth({navigation}) {
-  //state
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [visible, setVisible] = useState(true);
   //redux
   const dispatch = useDispatch();
   const loading = useSelector((state) => state.authReducer.loading);
+  const loggedInUser = useSelector((state) => state.authReducer.loggedInUser);
+  const error = useSelector((state) => state.authReducer.error);
+  const registeredUser = useSelector(
+    (state) => state.registerReducer.registeredUser,
+  );
+
+  //state
+  const [email, setEmail] = useState(
+    registeredUser ? registeredUser.data.user.email : '',
+  );
+  const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    if (error) {
+      ToastAndroid.show(error.response.data.message, ToastAndroid.SHORT);
+    } else if (loggedInUser) {
+      AsyncStorage.setItem('loggedInUser', JSON.stringify(loggedInUser));
+    }
+  }, [error, loggedInUser]);
+
   const onLogin = () => {
     dispatch(loginAction(email, password));
   };
-  //   const navigation = useNavigation();
   return (
     <ScrollView>
       <TouchableOpacity activeOpacity={1} style={styles.container}>
@@ -43,7 +59,7 @@ export default function Auth({navigation}) {
             <View style={styles.inputText}>
               <TextInput
                 style={styles.text}
-                label="Username"
+                label="Email"
                 onChangeText={(text) => setEmail(text)}
                 theme={{
                   colors: {
@@ -82,11 +98,10 @@ export default function Auth({navigation}) {
         </ImageBackground>
       </TouchableOpacity>
       <View style={styles.registerContainer}>
-        <Text style={styles.registerText}>Let's meet Tanle first!</Text>
+        <Text style={styles.registerText}>Haven't had an account yet ?</Text>
         <TouchableOpacity
           style={styles.register}
           onPress={() => {
-            console.log('Click');
             navigation.navigate('RegisterScreen');
           }}>
           <Text style={styles.registerButton}>JOIN NOW !</Text>
@@ -128,7 +143,8 @@ const styles = StyleSheet.create({
     padding: 30,
     paddingTop: 10,
     borderRadius: 30,
-    margin: 30,
+    marginVertical: 10,
+    marginHorizontal: 30,
     backgroundColor: 'white',
     shadowColor: 'black',
     shadowOpacity: 0.4,

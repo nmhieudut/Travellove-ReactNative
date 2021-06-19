@@ -7,7 +7,7 @@ function login(email, password) {
   };
   return new Promise((resolve, reject) => {
     axios
-      .post('https://reqres.in/api/login', userConfig)
+      .post('https://travellove-cndd.herokuapp.com/users/login', userConfig)
       .then((res) => {
         resolve(res);
       })
